@@ -1,28 +1,37 @@
 <h1 align="center"> douyin </h1>
 
-<p align="center"> 抖音爬虫.</p>
-
-
-## Installing
+## 安装
 
 ```shell
-$ composer require peimengc/douyin -vvv
+$ composer require peimengc/douyin
 ```
 
-## Usage
+## 使用
 
-TODO
+```
+use Peimengc\Douyin\Douyin
 
-## Contributing
+$douyin = new Douyin();
+```
 
-You can contribute in one of three ways:
+### 获取/检测二维码
 
-1. File bug reports using the [issue tracker](https://github.com/peimengc/douyin/issues).
-2. Answer questions or fix bugs on the [issue tracker](https://github.com/peimengc/douyin/issues).
-3. Contribute new features or update the wiki.
+```
+$jar = new CookieJar();
+$response = $douyin->setGuzzleOptions(['cookies' => $jar])->checkQrcode($token);
+```
+请求之后 `$jar` 已包含cookie
+返回示例:
+```
 
-_The code contribution process is not very formal. You just need to make sure that you follow the PSR-0, PSR-1, and PSR-2 coding guidelines. Any new code contributions must be accompanied by unit tests where applicable._
+```
 
-## License
+### 获取用户信息
+```
+// 使用扫码的 $jar
+$response = $douyin->setGuzzleOptions(['cookies' => $jar])->getUserInfo();
+```
+返回示例:
+```
 
-MIT
+```
