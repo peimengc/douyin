@@ -1,0 +1,26 @@
+{
+    "name": "peimengc\/douyin",
+    "description": "抖音爬虫",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "peimengc",
+            "email": "931692760@qq.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Peimengc\\Douyin\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Peimengc\\Douyin\\ServiceProvider"
+            ]
+        }
+    }
+}
