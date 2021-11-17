@@ -10,6 +10,7 @@ class Douyin
     const USER_INFO_URI = 'https://creator.douyin.com/web/api/media/user/info/?_signature=_02B4Z6wo00d01QJRSVQAAIDCyu2AS1DahZUCVU3AACBnSjveA3YRfmmMyKX45Xlzbn4EkeaDkghdrEKIURC22MPvAVNO';
     protected $key;
     protected $guzzleOptions = [];
+    protected $xSecsdkCsrfToken;
 
     public function getHttpClient()
     {
@@ -54,114 +55,47 @@ class Douyin
     //视频列表
     public function mediaAwemePost($status = 0, $max_cursor = 0)
     {
-        $url = 'https://creator.douyin.com/web/api/media/aweme/post/';
+        $uri = 'https://creator.douyin.com/web/api/media/aweme/post/';
         $query = [
             'scene' => 'star_atlas',
             'status' => $status,//0全部1已发布
             'count' => '12',
             'max_cursor' => $max_cursor,
-            'cookie_enabled' => 'true',
-            'screen_width' => '1536',
-            'screen_height' => '864',
-            'browser_language' => 'zh-CN',
-            'browser_platform' => 'Win32',
-            'browser_name' => 'Mozilla',
-            'browser_version' => '5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
-            'browser_online' => 'true',
-            'timezone_name' => 'Asia/Shanghai',
-            'aid' => '1128',
-            '_signature' => ''
         ];
-        $headers = [
-            'authority' => 'creator.douyin.com',
-            'sec-ch-ua' => '"Google Chrome";v="95", "Chromium";v="95", ";Not A Brand";v="99"',
-            'accept' => 'application/json, text/plain, */*',
-            'sec-ch-ua-mobile' => '?0',
-            'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
-            'sec-ch-ua-platform' => '"Windows"',
-            'sec-fetch-site' => 'same-origin',
-            'sec-fetch-mode' => 'cors',
-            'sec-fetch-dest' => 'empty',
-            'referer' => 'https://creator.douyin.com/creator-micro/content/manage',
-            'accept-language' => 'zh-CN,zh;q=0.9',
-        ];
-        $contents = $this->getHttpClient()->get($url, compact('query', 'headers'))->getBody()->getContents();
-        return json_decode($contents, true);
+        return $this->creatorRequest('GET', $uri, compact('query'));
     }
 
     //设置视频权限
-    public function mediaAwemeUpdate($xSecsdkCsrfToken, $item_id, $visibility_type, $download = 0)
+    public function mediaAwemeUpdate($item_id, $visibility_type, $download = 0)
     {
-        $url = 'https://creator.douyin.com/web/api/media/aweme/update/';
-        $query = [
-            'cookie_enabled' => 'true',
-            'screen_width' => '1536',
-            'screen_height' => '864',
-            'browser_language' => 'zh-CN',
-            'browser_platform' => 'Win32',
-            'browser_name' => 'Mozilla',
-            'browser_version' => '5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
-            'browser_online' => 'true',
-            'timezone_name' => 'Asia/Shanghai',
-            'aid' => '1128',
-            '_signature' => ''
-        ];
-        $headers = [
-            'authority' => 'creator.douyin.com',
-            'sec-ch-ua' => '"Google Chrome";v="95", "Chromium";v="95", ";Not A Brand";v="99"',
-            'accept' => 'application/json, text/plain, */*',
-            'content-type' => 'application/x-www-form-urlencoded;charset=UTF-8',
-            'x-secsdk-csrf-token' => $xSecsdkCsrfToken,
-            'sec-ch-ua-mobile' => '?0',
-            'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
-            'sec-ch-ua-platform' => '"Windows"',
-            'origin' => 'https://creator.douyin.com',
-            'sec-fetch-site' => 'same-origin',
-            'sec-fetch-mode' => 'cors',
-            'sec-fetch-dest' => 'empty',
-            'referer' => 'https://creator.douyin.com/creator-micro/content/manage',
-            'accept-language' => 'zh-CN,zh;q=0.9',
-        ];
+        $uri = 'https://creator.douyin.com/web/api/media/aweme/update/';
         $form_params = [
             'item_id' => $item_id,
             'download' => $download,
             'visibility_type' => $visibility_type,//1私密0公开2好友可见
         ];
-        $contents = $this->getHttpClient()->post($url, compact('query', 'headers', 'form_params'))->getBody()->getContents();
-        return json_decode($contents, true);
+        return $this->creatorRequest('POST', $uri, compact('form_params'));
     }
 
     //获取x-secsdk-csrf-token
-    public function mediaAwemeUpdateHead()
+    public function withXSecsdkCsrfToken()
     {
-        $url = 'https://creator.douyin.com/web/api/media/aweme/update/';
+        $this->xSecsdkCsrfToken = null;
+        $uri = 'https://creator.douyin.com/web/api/media/aweme/update/';
         $headers = [
-            'authority' => 'creator.douyin.com',
-            'sec-ch-ua' => '"Google Chrome";v="95", "Chromium";v="95", ";Not A Brand";v="99"',
             'x-secsdk-csrf-version' => '1.2.7',
             'x-secsdk-csrf-request' => '1',
-            'sec-ch-ua-mobile' => '?0',
-            'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
-            'sec-ch-ua-platform' => '"Windows"',
-            'accept' => '*/*',
-            'sec-fetch-site' => 'same-origin',
-            'sec-fetch-mode' => 'cors',
-            'sec-fetch-dest' => 'empty',
-            'referer' => 'https://creator.douyin.com/creator-micro/content/manage',
-            'accept-language' => 'zh-CN,zh;q=0.9',
         ];
-        $response = $this->getHttpClient()->head($url, compact('headers'));
-        return explode(',', $response->getHeader('x-ware-csrf-token')[0])[1];
+        $response = $this->creatorRequest('HEAD', $uri, compact('headers'), true);
+        $this->xSecsdkCsrfToken = explode(',', $response->getHeader('x-ware-csrf-token')[0])[1];
+        return $this;
     }
 
     //根据商品链接获取商品信息
-    public function mediaShopPromotionLink($promotionLink, $xSecsdkCsrfToken)
+    public function mediaShopPromotionLink($promotionLink)
     {
         $uri = 'https://creator.douyin.com/web/api/media/shop/promotion/link/';
         return $this->creatorRequest('POST', $uri, [
-            'headers' => [
-                'x-secsdk-csrf-token' => $xSecsdkCsrfToken,
-            ],
             'form_params' => [
                 'promotion_link' => $promotionLink
             ]
@@ -169,13 +103,10 @@ class Douyin
     }
 
     //shop_draft_id
-    public function mediaShopDraftUpdate(string $rawDraft, $xSecsdkCsrfToken)
+    public function mediaShopDraftUpdate(string $rawDraft)
     {
         $uri = 'https://creator.douyin.com/web/api/media/shop/draft/update/';
         return $this->creatorRequest('POST', $uri, [
-            'headers' => [
-                'x-secsdk-csrf-token' => $xSecsdkCsrfToken,
-            ],
             'form_params' => [
                 'raw_draft' => $rawDraft
             ]
@@ -183,7 +114,7 @@ class Douyin
     }
 
     //创建视频
-    public function mediaAwemeCreate(array $params, $xSecsdkCsrfToken)
+    public function mediaAwemeCreate(array $params)
     {
         $uri = 'https://creator.douyin.com/web/api/media/aweme/create/';
         $default = [
@@ -195,7 +126,7 @@ class Douyin
             //'text_extra' => '[{"start":0,"end":4,"user_id":"","type":1,"hashtag_name":"马桶刷"},{"start":5,"end":11,"user_id":"","type":1,"hashtag_name":"硅胶马桶刷"},{"start":12,"end":17,"user_id":"","type":1,"hashtag_name":"马桶除臭"}]',
             'challenges' => '[]',
             'mentions' => '[]',
-            'hashtag_source' => '"recommend/recommend/recommend"',
+            'hashtag_source' => '',
             'visibility_type' => '0',
             'download' => '0',
             'upload_source' => '1',
@@ -207,13 +138,21 @@ class Douyin
             'poster_delay' => '0',
             //'shop_draft_id' => '3515671237245439260',
             'music_source' => '0',
-            'music_id' => ','
+            'music_id' => ''
         ];
         return $this->creatorRequest('POST', $uri, [
-            'headers' => [
-                'x-secsdk-csrf-token' => $xSecsdkCsrfToken,
-            ],
             'form_params' => array_merge($default, $params)
+        ]);
+    }
+
+    //删除已发布视频
+    public function mediaAwemeDelete($itemId)
+    {
+        $uri = 'https://creator.douyin.com/web/api/media/aweme/delete/';
+        return $this->creatorRequest('POST', $uri, [
+            'form_params' => [
+                'item_id' => $itemId
+            ]
         ]);
     }
 
@@ -246,6 +185,9 @@ class Douyin
             'referer' => 'https://creator.douyin.com/creator-micro/content/manage',
             'accept-language' => 'zh-CN,zh;q=0.9',
         ];
+        if ($this->xSecsdkCsrfToken) {
+            $headers['x-secsdk-csrf-token'] = $this->xSecsdkCsrfToken;
+        }
         $options['headers'] = array_merge($headers, $options['headers'] ?? []);
         $options['query'] = array_merge($query, $options['query'] ?? []);
         $response = $this->getHttpClient()->request($method, $uri, $options);
@@ -253,7 +195,7 @@ class Douyin
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function itemInfo($id)
+    public function bluevItemInfo($id)
     {
         $uri = 'https://e.douyin.com/aweme/v1/bluev/item/info';
         $contents = $this->getHttpClient()->get($uri, [
