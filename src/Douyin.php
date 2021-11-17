@@ -90,7 +90,7 @@ class Douyin
     }
 
     //设置视频权限
-    public function mediaAwemeUpdate($xWareCsrfToken, $item_id, $visibility_type, $download = 0)
+    public function mediaAwemeUpdate($xSecsdkCsrfToken, $item_id, $visibility_type, $download = 0)
     {
         $url = 'https://creator.douyin.com/web/api/media/aweme/update/';
         $query = [
@@ -111,7 +111,7 @@ class Douyin
             'sec-ch-ua' => '"Google Chrome";v="95", "Chromium";v="95", ";Not A Brand";v="99"',
             'accept' => 'application/json, text/plain, */*',
             'content-type' => 'application/x-www-form-urlencoded;charset=UTF-8',
-            'x-secsdk-csrf-token' => $xWareCsrfToken,
+            'x-secsdk-csrf-token' => $xSecsdkCsrfToken,
             'sec-ch-ua-mobile' => '?0',
             'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
             'sec-ch-ua-platform' => '"Windows"',
@@ -152,5 +152,104 @@ class Douyin
         ];
         $response = $this->getHttpClient()->head($url, compact('headers'));
         return explode(',', $response->getHeader('x-ware-csrf-token')[0])[1];
+    }
+
+    //根据商品链接获取商品信息
+    public function mediaShopPromotionLink($promotionLink, $xSecsdkCsrfToken)
+    {
+        $uri = 'https://creator.douyin.com/web/api/media/shop/promotion/link/';
+        return $this->creatorRequest('POST', $uri, [
+            'headers' => [
+                'x-secsdk-csrf-token' => $xSecsdkCsrfToken,
+            ],
+            'form_params' => [
+                'promotion_link' => $promotionLink
+            ]
+        ]);
+    }
+
+    //shop_draft_id
+    public function mediaShopDraftUpdate(string $rawDraft, $xSecsdkCsrfToken)
+    {
+        $uri = 'https://creator.douyin.com/web/api/media/shop/draft/update/';
+        return $this->creatorRequest('POST', $uri, [
+            'headers' => [
+                'x-secsdk-csrf-token' => $xSecsdkCsrfToken,
+            ],
+            'form_params' => [
+                'raw_draft' => $rawDraft
+            ]
+        ]);
+    }
+
+    //创建视频
+    public function mediaAwemeCreate(array $params, $xSecsdkCsrfToken)
+    {
+        $uri = 'https://creator.douyin.com/web/api/media/aweme/create/';
+        $default = [
+            //'video_id' => 'v0200fg10000c6a5forc77u4lg0ftosg',
+            'ifLongTitle' => 'true',
+            //'text' => '#马桶刷 #硅胶马桶刷 #马桶除臭 哈哈哈',
+            'record' => 'null',
+            'source_info' => '',
+            //'text_extra' => '[{"start":0,"end":4,"user_id":"","type":1,"hashtag_name":"马桶刷"},{"start":5,"end":11,"user_id":"","type":1,"hashtag_name":"硅胶马桶刷"},{"start":12,"end":17,"user_id":"","type":1,"hashtag_name":"马桶除臭"}]',
+            'challenges' => '[]',
+            'mentions' => '[]',
+            'hashtag_source' => '"recommend/recommend/recommend"',
+            'visibility_type' => '0',
+            'download' => '0',
+            'upload_source' => '1',
+            'is_preview' => '0',
+            'hot_sentence' => '',
+            'cover_text_uri' => '',
+            'cover_text' => '',
+            //'poster' => 'tos-cn-p-0015/093bd8078b0d4f0a8d6025006e249385',
+            'poster_delay' => '0',
+            //'shop_draft_id' => '3515671237245439260',
+            'music_source' => '0',
+            'music_id' => ','
+        ];
+        return $this->creatorRequest('POST', $uri, [
+            'headers' => [
+                'x-secsdk-csrf-token' => $xSecsdkCsrfToken,
+            ],
+            'form_params' => array_merge($default, $params)
+        ]);
+    }
+
+    // 创作着平台请求
+    protected function creatorRequest($method, $uri, array $options, $raw = false)
+    {
+        $query = [
+            'cookie_enabled' => 'true',
+            'screen_width' => '1536',
+            'screen_height' => '864',
+            'browser_language' => 'zh-CN',
+            'browser_platform' => 'Win32',
+            'browser_name' => 'Mozilla',
+            'browser_version' => '5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
+            'browser_online' => 'true',
+            'timezone_name' => 'Asia/Shanghai',
+            'aid' => '1128',
+            '_signature' => ''
+        ];
+        $headers = [
+            'authority' => 'creator.douyin.com',
+            'sec-ch-ua' => '"Google Chrome";v="95", "Chromium";v="95", ";Not A Brand";v="99"',
+            'accept' => 'application/json, text/plain, */*',
+            'sec-ch-ua-mobile' => '?0',
+            'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
+            'sec-ch-ua-platform' => '"Windows"',
+            'sec-fetch-site' => 'same-origin',
+            'sec-fetch-mode' => 'cors',
+            'sec-fetch-dest' => 'empty',
+            'referer' => 'https://creator.douyin.com/creator-micro/content/manage',
+            'accept-language' => 'zh-CN,zh;q=0.9',
+        ];
+        $options['headers'] = array_merge($headers, $options['headers'] ?? []);
+        $options['query'] = array_merge($query, $options['query'] ?? []);
+        $response = $this->getHttpClient()->request($method, $uri, $options);
+        if ($raw) return $response;
+        return json_decode($response->getBody()->getContents(), true);
     }
 }
