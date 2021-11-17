@@ -252,4 +252,26 @@ class Douyin
         if ($raw) return $response;
         return json_decode($response->getBody()->getContents(), true);
     }
+
+    public function itemInfo($id)
+    {
+        $uri = 'https://e.douyin.com/aweme/v1/bluev/item/info';
+        $contents = $this->getHttpClient()->get($uri, [
+            'query' => ['id' => $id],
+            'headers' => [
+                'authority' => 'e.douyin.com',
+                'sec-ch-ua' => '"Google Chrome";v="95", "Chromium";v="95", ";Not A Brand";v="99"',
+                'accept' => 'application/json, text/plain, */*',
+                'sec-ch-ua-mobile' => '?0',
+                'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
+                'sec-ch-ua-platform' => '"Windows"',
+                'sec-fetch-site' => 'same-origin',
+                'sec-fetch-mode' => 'cors',
+                'sec-fetch-dest' => 'empty',
+                'referer' => 'https://e.douyin.com/site/operation-center/video-manage/self/' . $id,
+                'accept-language' => 'zh-CN,zh;q=0.9',
+            ]
+        ])->getBody()->getContents();
+        return json_decode($contents, true);
+    }
 }
