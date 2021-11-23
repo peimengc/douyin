@@ -221,7 +221,7 @@ class Douyin
     }
 
     //发送请求
-    protected function request($method, $uri, array $options, $raw = false)
+    protected function request($method, $uri, array $options = [], $raw = false)
     {
         $options = array_merge($this->guzzleOptions, $options, ['handler' => $this->getHandlerStack()]);
         $response = $this->getHttpClient()->request($method, $uri, $options);
