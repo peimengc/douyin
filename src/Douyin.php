@@ -17,7 +17,7 @@ class Douyin
 
     public function getHttpClient()
     {
-        return new Client();
+        return new Client($this->guzzleOptions);
     }
 
     public function pushMiddleware(callable $middleware, $name)
@@ -35,30 +35,26 @@ class Douyin
     public function checkQrcode($token)
     {
         $uri = static::CHECK_QRCODE_URI . $token;
-        $contents = $this->getHttpClient()->get($uri)->getBody()->getContents();
-        return json_decode($contents, true);
+        return $this->request('GET', $uri);
     }
 
     public function getUserInfo()
     {
-        $contents = $this->getHttpClient()->get(self::USER_INFO_URI)->getBody()->getContents();
-        return json_decode($contents, true);
+        return $this->request('GET', self::USER_INFO_URI);
     }
 
     //信誉分 口碑分
     public function getUserReputation()
     {
         $url = 'https://aweme.snssdk.com/aweme/v2/shop/user/reputation/?request_tag_from=rn&os_api=23&device_type=MI+5s&ssmix=a&manifest_version_code=120701&dpi=320&app_name=aweme&version_name=12.7.0&ts=1608271408&cpu_support64=false&storage_type=0&app_type=normal&host_abi=armeabi-v7a&update_version_code=12709900&channel=aweGW&device_platform=android&version_code=120700&language=zh&device_brand=Xiaomi&aid=1128';
-        $contents = $this->getHttpClient()->get($url)->getBody()->getContents();
-        return json_decode($contents, true);
+        return $this->request('GET', $url);
     }
 
     //可提现佣金
     public function getUserCommission()
     {
         $url = 'https://lianmeng.snssdk.com/ies/v2/author/withdrawPageInfo?b_type_new=2&__t=&b_type=2&is_vcd=1&request_tag_from=h5&os_api=23&device_type=MI9&ssmix=a&manifest_version_code=110001&dpi=270&uuid=&app_name=aweme&version_name=11.0.0&ts=&cpu_support64=false&app_type=normal&ac=wifi&host_abi=armeabi-v7a&update_version_code=11009900&channel=360_aweme&_rticket=&device_platform=android&iid=&version_code=110000&openudid=&device_id=&os_version=6.0.1&language=zh&device_brand=Xiaomi&aid=1128&mcc_mnc=46003';
-        $contents = $this->getHttpClient()->get($url)->getBody()->getContents();
-        return json_decode($contents, true);
+        return $this->request('GET', $url);
     }
 
     //视频列表
@@ -169,7 +165,7 @@ class Douyin
     public function bluevItemInfo($id)
     {
         $uri = 'https://e.douyin.com/aweme/v1/bluev/item/info';
-        $contents = $this->getHttpClient()->get($uri, [
+        return $this->request()('GET', $uri, [
             'query' => ['id' => $id],
             'headers' => [
                 'authority' => 'e.douyin.com',
@@ -184,8 +180,7 @@ class Douyin
                 'referer' => 'https://e.douyin.com/site/operation-center/video-manage/self/' . $id,
                 'accept-language' => 'zh-CN,zh;q=0.9',
             ]
-        ])->getBody()->getContents();
-        return json_decode($contents, true);
+        ]);
     }
 
     // 创作着平台请求
