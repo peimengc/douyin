@@ -165,7 +165,7 @@ class Douyin
     public function bluevItemInfo($id)
     {
         $uri = 'https://e.douyin.com/aweme/v1/bluev/item/info';
-        return $this->request()('GET', $uri, [
+        return $this->request('GET', $uri, [
             'query' => ['id' => $id],
             'headers' => [
                 'authority' => 'e.douyin.com',
