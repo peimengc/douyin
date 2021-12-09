@@ -58,13 +58,13 @@ class Douyin
     }
 
     //视频列表
-    public function mediaAwemePost($status = 0, $max_cursor = 0)
+    public function mediaAwemePost($max_cursor = 0, $status = 0, $count = 12)
     {
         $uri = 'https://creator.douyin.com/web/api/media/aweme/post/';
         $query = [
             'scene' => 'star_atlas',
             'status' => $status,//0全部1已发布
-            'count' => '12',
+            'count' => $count,
             'max_cursor' => $max_cursor,
         ];
         return $this->creatorRequest('GET', $uri, compact('query'));
@@ -180,6 +180,14 @@ class Douyin
                 'referer' => 'https://e.douyin.com/site/operation-center/video-manage/self/' . $id,
                 'accept-language' => 'zh-CN,zh;q=0.9',
             ]
+        ]);
+    }
+
+    public function bluevItemList($anchor = 0, $count = 50, $source = 26, $other_sec_uid = '')
+    {
+        $uri = 'https://e.douyin.com/aweme/v1/bluev/item/list';
+        return $this->request('GET', $uri, [
+            'query' => compact('anchor', 'count', 'source', 'other_sec_uid')
         ]);
     }
 
