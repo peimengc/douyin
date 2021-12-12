@@ -12,11 +12,11 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             return new Douyin();
         });
 
-        $this->app->alias(Douyin::class, 'weather');
+        $this->app->alias(Douyin::class, 'douyin');
     }
 
     public function provides()
     {
-        return [Douyin::class, 'weather'];
+        return [Douyin::class, 'douyin'];
     }
 }

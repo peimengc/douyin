@@ -329,7 +329,13 @@ class Douyin
         return $this->appRequest('GET', $uri, compact('query'));
     }
 
-    protected function appRequest($method, $uri, array $options, $raw = false)
+    public function roomStatsList()
+    {
+        $url = 'https://webcast.amemv.com/webcast/data/data_center/room_stats_list?aid=1128';
+        return $this->appRequest('GET', $url);
+    }
+
+    protected function appRequest($method, $uri, array $options = [], $raw = false)
     {
         $query = [
             'passport-sdk-version' => '18',
